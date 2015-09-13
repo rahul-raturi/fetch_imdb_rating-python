@@ -7,6 +7,7 @@ from os import system, listdir
 
 def fetch_rating(movie):
 	search_url = "http://omdbapi.com/?t="+movie+"&type=movie"
+	print search_url
 	movie_data = requests.get(search_url).json()
 	if movie_data['Response'] == "False":
 		return ' ', ' ' 
@@ -20,7 +21,6 @@ def display_results(movies):
 	print '-'*len(top_bar)
 
 	for movie in movies:
-		movie = movie.encode('ascii', 'ignore')
 		title, rating = fetch_rating(movie.lower())
 		if title == ' ':
 			title = movie 
@@ -48,17 +48,17 @@ def format_movie_names(files_list):
 
 	for name in files_list:
 		tmp = (name.split('('))[0]
-		if (tmp.split('.'))[-1] in ['mp4', 'mkv', 'avi']:
+		if (tmp.split('.'))[-1] in ['mp4', 'mkv', 'avi', 'srt']:
 			tmp = ' '.join((tmp.split('.'))[0:-1])
 		tmp = ' '.join(tmp.split('.'))
 		tmp = ' '.join(tmp.split('_'))
 		##To remove years stuck with names of movies
 		tmp_ls = tmp.split(' ')
-		for i in range(len(tmp_ls)):
+		for i in range(1, len(tmp_ls)):
 			if is_year_or_reso(tmp_ls[i]):
 				tmp = ' '.join(tmp_ls[0:i])
 				break
-
+		tmp = '+'.join(tmp.split(' '))
 		movies.append(tmp)
 	
 	return movies
@@ -75,7 +75,7 @@ def main():
 	print '2 -> Search a local directory for movies'
 	choice = raw_input(': ')
 	if choice == '1':
-		movies.append(raw_input("Enter movie name: "))
+		movies.append('+'.join(raw_input("Enter movie name: ").split()))
 		display_results(movies)
 	elif choice == '2':
 		while True:
