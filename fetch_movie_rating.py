@@ -6,7 +6,7 @@ from os import system, listdir
 
 
 def fetch_rating(movie):
-	search_url = "http://omdbapi.com/?t="+movie+"&r=json"
+	search_url = "http://omdbapi.com/?t="+movie+"&type=movie"
 	movie_data = requests.get(search_url).json()
 	if movie_data['Response'] == "False":
 		return ' ', ' ' 
@@ -76,6 +76,7 @@ def main():
 	choice = raw_input(': ')
 	if choice == '1':
 		movies.append(raw_input("Enter movie name: "))
+		display_results(movies)
 	elif choice == '2':
 		while True:
 			direc = raw_input("Enter directory: ")
