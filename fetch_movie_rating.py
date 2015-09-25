@@ -7,6 +7,7 @@ from os import system, listdir
 
 def fetch_rating(movie):
 	search_url = "http://omdbapi.com/?t="+movie+"&type=movie"
+	print search_url
 	movie_data = requests.get(search_url).json()
 	if movie_data['Response'] == "False":
 		return ' ', ' '
@@ -30,7 +31,7 @@ def display_results(movies):
 	print '-'*len(top_bar)
 
 	for movie in movies:
-		if(len(title) > 50):
+		if(len(movie[0]) > 50):
 			title = title[0:47] + '...'
 		print '{0: <50}'.format(movie[0])+'|'+'{0: ^9}'.format(movie[1])
 
@@ -68,7 +69,6 @@ def format_movie_names(files_list):
 					break
 
 			movies.append(tmp)
-	
 	return movies
 
 
@@ -83,7 +83,7 @@ def main():
 	print '2 -> Search a local directory for movies'
 	choice = raw_input(': ')
 	if choice == '1':
-		movies.append(raw_input("Enter movie name: "))
+		movies.append('+'.join(raw_input("Enter movie name: ").split()))
 		display_results(movies)
 	elif choice == '2':
 		while True:
