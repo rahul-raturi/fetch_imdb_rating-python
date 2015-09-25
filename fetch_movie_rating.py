@@ -9,9 +9,19 @@ def fetch_rating(movie):
 	search_url = "http://omdbapi.com/?t="+movie+"&type=movie"
 	movie_data = requests.get(search_url).json()
 	if movie_data['Response'] == "False":
-		return ' ', ' ' 
+		return ' ', ' '
 	return movie_data['Title'], movie_data['imdbRating']
 
+
+def gather_results(movies_list):
+	movies = list()
+	for movie in movies_list:
+		tmp = fetch_rating(movie)
+		if tmp[0] == ' ':
+			tmp[0] = movie
+			tmp[1] = 'N/A'
+		movies.append(tmp)
+	return movies
 
 def display_results(movies):
 	system('clear')
@@ -20,14 +30,10 @@ def display_results(movies):
 	print '-'*len(top_bar)
 
 	for movie in movies:
-		movie = movie.encode('ascii', 'ignore')
-		title, rating = fetch_rating(movie.lower())
-		if title == ' ':
-			title = movie 
 		if(len(title) > 50):
 			title = title[0:47] + '...'
-		print '{0: <50}'.format(title)+'|'+'{0: ^9}'.format(rating)
-	
+		print '{0: <50}'.format(movie[0])+'|'+'{0: ^9}'.format(movie[1])
+
 	print '-'*60
 
 
@@ -39,7 +45,7 @@ def is_year_or_reso(wrd):
 	for x in wrd:
 		if x not in digits:
 			return False
-	
+
 	return True
 
 
@@ -47,19 +53,21 @@ def format_movie_names(files_list):
 	movies = list()
 
 	for name in files_list:
-		tmp = (name.split('('))[0]
-		if (tmp.split('.'))[-1] in ['mp4', 'mkv', 'avi']:
-			tmp = ' '.join((tmp.split('.'))[0:-1])
-		tmp = ' '.join(tmp.split('.'))
-		tmp = ' '.join(tmp.split('_'))
-		##To remove years stuck with names of movies
-		tmp_ls = tmp.split(' ')
-		for i in range(len(tmp_ls)):
-			if is_year_or_reso(tmp_ls[i]):
-				tmp = ' '.join(tmp_ls[0:i])
-				break
+		name = name.encode('utf-8', 'ignore')
+		if name != None:
+			tmp = (name.split('('))[0]
+			if (tmp.split('.'))[-1] in ['mp4', 'mkv', 'avi']:
+				tmp = ' '.join((tmp.split('.'))[0:-1])
+			tmp = ' '.join(tmp.split('.'))
+			tmp = ' '.join(tmp.split('_'))
+			##To remove years stuck with names of movies
+			tmp_ls = tmp.split(' ')
+			for i in range(len(tmp_ls)):
+				if is_year_or_reso(tmp_ls[i]):
+					tmp = ' '.join(tmp_ls[0:i])
+					break
 
-		movies.append(tmp)
+			movies.append(tmp)
 	
 	return movies
 
@@ -88,5 +96,5 @@ def main():
 
 			except OSError:
 				print "\nNo such directory, Try again!\n"
-	
+
 main()
